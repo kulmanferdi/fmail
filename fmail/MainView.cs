@@ -8,7 +8,6 @@ using MimeKit.Text;
 
 using MailKit;
 using MailKit.Net.Imap;
-using System.Diagnostics;
 
 namespace fmail
 {
@@ -28,21 +27,20 @@ namespace fmail
             settingsview_btn.Click += ShowSettings;
             aboutview_btn.Click += ShowAbout;
             refresh_btn.Click += RefreshInbox;
-
-            //sendMailView.Visible = false;
+            logout_btn.Click += Logout;
+                        
             sendNewMail1.Visible = false;
             settings1.Visible = false;
             about1.Visible = false;
         }
-
+               
         private void ShowAbout(object sender, EventArgs e)
         {
 
             inbox_label.Text = "About";
             DeleteMessage.Visible = false;
             Markasunread.Visible = false;
-            refresh_btn.Visible = false;
-            //sendMailView.Visible = false;
+            refresh_btn.Visible = false;            
             sendNewMail1.Visible = false;
             folderTreeView.Visible = false;
             messageList.Visible = false;
@@ -59,7 +57,6 @@ namespace fmail
             DeleteMessage.Visible = false;
             Markasunread.Visible = false;
             refresh_btn.Visible = false;
-            //sendMailView.Visible = false;
             sendNewMail1.Visible = false;
             folderTreeView.Visible = false;
             messageList.Visible = false;
@@ -77,8 +74,6 @@ namespace fmail
 
         private void ShowSendMail(object sender, EventArgs e)
         {
-            //sendMailView.Visible = true;
-            //sendMailView.BringToFront();
             sendNewMail1.Visible = true;
             sendNewMail1.BringToFront();
 
@@ -105,7 +100,6 @@ namespace fmail
             Markasunread.Visible = true;
             settings1.Visible = false;
             about1.Visible = false;
-            //sendMailView.Visible = false;
             sendNewMail1.Visible = false;
         }
 
@@ -113,7 +107,7 @@ namespace fmail
         private void MarkAsUnRead(object sender, EventArgs e)
         {
             DialogResult unread = MessageBox.Show(
-                "Delete Message",
+                "Mark Message as unread",
                 "Mark this message as unread?",
                 MessageBoxButtons.OKCancel,
                 MessageBoxIcon.Question,
@@ -140,7 +134,7 @@ namespace fmail
             if (deleteSelectedMessage == DialogResult.OK)
             {  
                 CurrentFolder.AddFlags(CurrentSelectedMessageUniqueId, MessageFlags.Deleted, true);
-                //Refresh();
+                //Refresh();                
             }
         }
 
@@ -382,5 +376,26 @@ namespace fmail
             folderTreeView.RefreshFolders();
             folderTreeView.LoadFolders();
         }
+        private void Logout(object sender, EventArgs e)
+        {
+            DialogResult logout = MessageBox.Show(
+                   "Logout",
+                   "Are you sure you want to logout?",
+                   MessageBoxButtons.OKCancel,
+                   MessageBoxIcon.Question,
+                   MessageBoxDefaultButton.Button1,
+                   MessageBoxOptions.DefaultDesktopOnly
+                  );
+            if (logout == DialogResult.OK)
+            {
+                Program.ImapClientConnection.Dispose();
+                Program.SmtpClientConnection.Dispose();
+                Program.ClearCredentials();
+
+                Application.Restart();
+            }
+           
+        }
+
     }
 }

@@ -163,6 +163,11 @@ namespace fmail
         public static void RunOnMainThread(Control control, Action action)
         {
             control.Invoke(new InvokeOnMainThreadDelegate(action));
-        }        
+        }      
+        public static void ClearCredentials()
+        {
+            ImapClientConnection.Credentials = new NetworkCredential(string.Empty, string.Empty);
+            SmtpClientConnection.Credentials = new NetworkCredential(string.Empty, string.Empty);
+        }
     }
 }

@@ -41,11 +41,12 @@
             this.inbox_label = new System.Windows.Forms.Label();
             this.Markasunread = new System.Windows.Forms.Button();
             this.DeleteMessage = new System.Windows.Forms.Button();
-            this.sendNewMail1 = new fmail.SendNewMail();
+            this.logout_btn = new System.Windows.Forms.Button();
             this.messageList = new fmail.MessageList();
             this.folderTreeView = new famil.FolderTreeView();
             this.settings1 = new fmail.Settings();
             this.about1 = new fmail.About();
+            this.sendNewMail1 = new fmail.SendNewMail();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -53,6 +54,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.logout_btn);
             this.panel1.Controls.Add(this.settingsview_btn);
             this.panel1.Controls.Add(this.aboutview_btn);
             this.panel1.Controls.Add(this.sendmailview_btn);
@@ -188,12 +190,18 @@
             this.DeleteMessage.Text = "Delete";
             this.DeleteMessage.UseVisualStyleBackColor = true;
             // 
-            // sendNewMail1
+            // logout_btn
             // 
-            this.sendNewMail1.Location = new System.Drawing.Point(0, 38);
-            this.sendNewMail1.Name = "sendNewMail1";
-            this.sendNewMail1.Size = new System.Drawing.Size(935, 618);
-            this.sendNewMail1.TabIndex = 7;
+            this.logout_btn.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.logout_btn.FlatAppearance.BorderSize = 0;
+            this.logout_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.logout_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.logout_btn.Location = new System.Drawing.Point(0, 482);
+            this.logout_btn.Name = "logout_btn";
+            this.logout_btn.Size = new System.Drawing.Size(127, 56);
+            this.logout_btn.TabIndex = 4;
+            this.logout_btn.Text = "LOG OUT";
+            this.logout_btn.UseVisualStyleBackColor = true;
             // 
             // messageList
             // 
@@ -226,6 +234,13 @@
             this.about1.Name = "about1";
             this.about1.Size = new System.Drawing.Size(935, 618);
             this.about1.TabIndex = 5;
+            // 
+            // sendNewMail1
+            // 
+            this.sendNewMail1.Location = new System.Drawing.Point(0, 38);
+            this.sendNewMail1.Name = "sendNewMail1";
+            this.sendNewMail1.Size = new System.Drawing.Size(935, 618);
+            this.sendNewMail1.TabIndex = 7;
             // 
             // MainView
             // 
@@ -266,5 +281,6 @@
         private Settings settings1;
         private About about1;
         private SendNewMail sendNewMail1;
+        private System.Windows.Forms.Button logout_btn;
     }
 }

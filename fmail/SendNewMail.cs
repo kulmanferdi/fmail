@@ -36,12 +36,14 @@ namespace fmail
             cc.GotFocus += RemoveCcText;
             bcc.GotFocus += RemoveBccText;
             subject.GotFocus += RemoveSubjectText;
+            body.GotFocus += RemoveBodyText;
 
             // Add event handlers for when textboxes lose focus to add placeholder text if empty
             to.LostFocus += AddToText;
             cc.LostFocus += AddCcText;
             bcc.LostFocus += AddBccText;
             subject.LostFocus += AddSubjectText;
+            body.LostFocus += AddBodyText;
 
             // Add event handler for sending email
             send.Click += Send;
@@ -49,10 +51,21 @@ namespace fmail
             // Add event handler for attaching files to email
             attachfiles.Click += Attach;
 
+            // Add event handler for removing attachments
+            attachremove.Click += Remove;
+
             // Initialize the list to store attachments
             attachments = new List<string>();
-        }
 
+            // Set the maximum size of the attached files label
+            attachedfiles.MaximumSize = new System.Drawing.Size(300, 0);
+            attachedfiles.AutoSize = true;
+            attachremove.Enabled = false;
+            attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+
+
+        }
+             
         private void Send(object sender, EventArgs e)
         {
             //declaring the local variables used in the method
@@ -87,8 +100,6 @@ namespace fmail
                    MessageBoxIcon.Error
                );
             }
-
-
 
             //setting up the current message
             MimeMessage currentMessage = new MimeMessage();
@@ -165,8 +176,8 @@ namespace fmail
 
             //setting up the smtp clien and sending the message
             //configuring the connection
-            SmtpClient client = new SmtpClient();
-            var smtpPort = 0;
+            var client = new SmtpClient();
+            var smtpPort = Program.SmtpPortOptions[1];
             if (Program.SmtpPortChanged)
             {
                 smtpPort = Settings.smtpPort;
@@ -174,50 +185,50 @@ namespace fmail
             else
             {
                 smtpPort = Program.SmtpClientConnection.Port;
-                client.Connect(
-                    Program.SmtpClientConnection.Host,
-                    smtpPort,
-                    Program.SmtpClientConnection.SslOptions
+            }
+            client.Connect(
+                Program.SmtpClientConnection.Host,
+                smtpPort,
+                Program.SmtpClientConnection.SslOptions
+            );
+            client.Authenticate(Program.SmtpClientConnection.Credentials);
+
+            try
+            {
+                client.Send(currentMessage);
+
+                MessageBox.Show("Mail Sent Successfully!");
+            }
+            catch (MailSendingException ex)
+            {
+                MessageBox.Show(
+                    "Error",
+                    "An error occurred while sending email: " + ex.Message,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
                 );
             }
-                client.Authenticate(Program.SmtpClientConnection.Credentials);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                to.Text = placeholders[0];
+                cc.Text = placeholders[1];
+                bcc.Text = placeholders[2];
 
-                try
+                subject.Text = placeholders[3];
+                body.Text = "";
+
+                if (attachments.Count > 0)
                 {
-                    client.Send(currentMessage);
-
-                    MessageBox.Show("Mail Sent Successfully!");
+                    attachfiles.Text = "";
+                    attachments.Clear();
+                    attachedcount.Text = "(" + attachments.Count.ToString() + ")";
                 }
-                catch (MailSendingException ex)
-                {
-                    MessageBox.Show(
-                        "Error",
-                        "An error occurred while sending email: " + ex.Message,
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    to.Text = placeholders[0];
-                    cc.Text = placeholders[1];
-                    bcc.Text = placeholders[2];
-
-                    subject.Text = placeholders[3];
-                    body.Text = "";
-
-                    if (attachments.Count > 0)
-                    {
-                        attachfiles.Text = "";
-                        attachments.Clear();
-                    }
-
-                    client.Dispose();
-                }
+                client.Dispose();
+            }
 
                 //theoretically, the message should be sent
             }
@@ -324,13 +335,25 @@ namespace fmail
 
                         // Update the attached files label to display the path of the selected file
                         attachedfiles.Text = (file + ";\n");
+
+                        // Enable the remove attachment button
+                        attachremove.Enabled = true;
                     }
 
                 }
+                attachedcount.Text = "("+attachments.Count.ToString()+")";
             }
 
-            //creating the methods for the event handlers
-            public void RemoveToText(object sender, EventArgs e)
+            private void Remove(object sender, EventArgs e)
+            {
+                attachments.Clear();
+                attachedfiles.Text = "";
+                attachremove.Enabled = false;
+                attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+            }
+
+        //creating the methods for the event handlers
+        public void RemoveToText(object sender, EventArgs e)
             {
                 if (to.Text == placeholders[0])
                 {
@@ -362,7 +385,15 @@ namespace fmail
                 }
             }
 
-            public void AddToText(object sender, EventArgs e)
+        private void RemoveBodyText(object sender, EventArgs e)
+        {
+            if (body.Text == placeholders[4])
+            {
+                body.Text = "";
+            }
+        }
+
+        public void AddToText(object sender, EventArgs e)
             {
                 if (string.IsNullOrWhiteSpace(to.Text))
                 {
@@ -391,6 +422,14 @@ namespace fmail
                 {
                     subject.Text = placeholders[3];
                 }
+            }       
+
+            private void AddBodyText(object sender, EventArgs e)
+            {
+                if (string.IsNullOrWhiteSpace(body.Text))
+                {
+                    body.Text = placeholders[4];
+                }
             }
-        }
+    }
 }

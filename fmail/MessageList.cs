@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 using MailKit;
 using MailKit.Net.Imap;
+using Org.BouncyCastle.Asn1.Mozilla;
 
 namespace fmail
 {
@@ -280,6 +281,23 @@ namespace fmail
             Clear();
             foreach (var node in Nodes)
                 RefreshMessage((TreeNode)node);
+        }
+        
+        public void Expunge()
+        {
+            folder.Expunge();
+        }
+
+        public void DeleteMessage(TreeNode node)
+        {
+            var info = (MessageInfo)node.Tag;
+
+            if (info.Summary.UniqueId.IsValid)
+            {
+                folder.SetFlags(info.Summary.UniqueId, MessageFlags.Deleted, true);
+                info.Flags |= MessageFlags.Deleted;
+                UpdateMessageNode(node);
+            }
         }
     }
 }

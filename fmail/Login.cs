@@ -4,13 +4,14 @@ using System.Reflection;
 using System.Windows.Forms;
 using MailKit.Security;
 using YourNamespace;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace fmail
 {
     public partial class Login : Form
     {
-        const string usertext = "Your email...";
-        const string passwordtext = "Your password...";
+        private const string usertext = "Your email...";
+        private const string passwordtext = "Your password...";
 
         private static string user;
 
@@ -56,6 +57,7 @@ namespace fmail
             {
                 username_txt.Text = usertext;
             }
+                       
         }
 
         private void RemovePasswordText(object sender, EventArgs e)
