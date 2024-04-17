@@ -30,8 +30,6 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainView));
             this.panel1 = new System.Windows.Forms.Panel();
-            this.settingsview_btn = new System.Windows.Forms.Button();
-            this.aboutview_btn = new System.Windows.Forms.Button();
             this.sendmailview_btn = new System.Windows.Forms.Button();
             this.inboxview_btn = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -47,6 +45,8 @@
             this.settings1 = new fmail.Settings();
             this.about1 = new fmail.About();
             this.sendNewMail1 = new fmail.SendNewMail();
+            this.aboutview_btn = new System.Windows.Forms.Button();
+            this.settingsview_btn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -54,9 +54,9 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.logout_btn);
             this.panel1.Controls.Add(this.settingsview_btn);
             this.panel1.Controls.Add(this.aboutview_btn);
+            this.panel1.Controls.Add(this.logout_btn);
             this.panel1.Controls.Add(this.sendmailview_btn);
             this.panel1.Controls.Add(this.inboxview_btn);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
@@ -64,32 +64,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(127, 650);
             this.panel1.TabIndex = 0;
-            // 
-            // settingsview_btn
-            // 
-            this.settingsview_btn.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.settingsview_btn.FlatAppearance.BorderSize = 0;
-            this.settingsview_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.settingsview_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.settingsview_btn.Location = new System.Drawing.Point(0, 538);
-            this.settingsview_btn.Name = "settingsview_btn";
-            this.settingsview_btn.Size = new System.Drawing.Size(127, 56);
-            this.settingsview_btn.TabIndex = 3;
-            this.settingsview_btn.Text = "SETTINGS";
-            this.settingsview_btn.UseVisualStyleBackColor = true;
-            // 
-            // aboutview_btn
-            // 
-            this.aboutview_btn.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.aboutview_btn.FlatAppearance.BorderSize = 0;
-            this.aboutview_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.aboutview_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.aboutview_btn.Location = new System.Drawing.Point(0, 594);
-            this.aboutview_btn.Name = "aboutview_btn";
-            this.aboutview_btn.Size = new System.Drawing.Size(127, 56);
-            this.aboutview_btn.TabIndex = 2;
-            this.aboutview_btn.Text = "ABOUT";
-            this.aboutview_btn.UseVisualStyleBackColor = true;
             // 
             // sendmailview_btn
             // 
@@ -196,7 +170,7 @@
             this.logout_btn.FlatAppearance.BorderSize = 0;
             this.logout_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
             this.logout_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.logout_btn.Location = new System.Drawing.Point(0, 482);
+            this.logout_btn.Location = new System.Drawing.Point(0, 594);
             this.logout_btn.Name = "logout_btn";
             this.logout_btn.Size = new System.Drawing.Size(127, 56);
             this.logout_btn.TabIndex = 4;
@@ -242,6 +216,32 @@
             this.sendNewMail1.Size = new System.Drawing.Size(935, 618);
             this.sendNewMail1.TabIndex = 7;
             // 
+            // aboutview_btn
+            // 
+            this.aboutview_btn.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.aboutview_btn.FlatAppearance.BorderSize = 0;
+            this.aboutview_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.aboutview_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.aboutview_btn.Location = new System.Drawing.Point(0, 538);
+            this.aboutview_btn.Name = "aboutview_btn";
+            this.aboutview_btn.Size = new System.Drawing.Size(127, 56);
+            this.aboutview_btn.TabIndex = 5;
+            this.aboutview_btn.Text = "ABOUT";
+            this.aboutview_btn.UseVisualStyleBackColor = true;
+            // 
+            // settingsview_btn
+            // 
+            this.settingsview_btn.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.settingsview_btn.FlatAppearance.BorderSize = 0;
+            this.settingsview_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.settingsview_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.settingsview_btn.Location = new System.Drawing.Point(0, 482);
+            this.settingsview_btn.Name = "settingsview_btn";
+            this.settingsview_btn.Size = new System.Drawing.Size(127, 56);
+            this.settingsview_btn.TabIndex = 6;
+            this.settingsview_btn.Text = "SETTINGS";
+            this.settingsview_btn.UseVisualStyleBackColor = true;
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -265,8 +265,6 @@
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button settingsview_btn;
-        private System.Windows.Forms.Button aboutview_btn;
         private System.Windows.Forms.Button sendmailview_btn;
         private System.Windows.Forms.Button inboxview_btn;
         private System.Windows.Forms.Panel panel2;
@@ -282,5 +280,7 @@
         private About about1;
         private SendNewMail sendNewMail1;
         private System.Windows.Forms.Button logout_btn;
+        private System.Windows.Forms.Button settingsview_btn;
+        private System.Windows.Forms.Button aboutview_btn;
     }
 }
