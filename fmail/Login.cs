@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Net;
-using System.Reflection;
 using System.Windows.Forms;
 using MailKit.Security;
-using YourNamespace;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace fmail

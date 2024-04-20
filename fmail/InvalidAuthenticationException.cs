@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YourNamespace
+namespace fmail
 {
     /// <summary>
     /// Represents an exception that occurs when invalid authentication data is provided.
