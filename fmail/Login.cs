@@ -18,30 +18,41 @@ namespace fmail
         public Login()
         {
             InitializeComponent();            
+            
+            // Set the default text for the username and password fields
+            username_txt.Text = usertext;
+            password_txt.Text = passwordtext;
 
+            // Attach event handlers
             enableSSL_chk.CheckedChanged += EnableSSLChanged;
             password_txt.TextChanged += LoginChanged;
             username_txt.TextChanged += LoginChanged;
             server_combo.TextChanged += ServerChanged;
             port_combo.TextChanged += PortChanged;
             signin_btn.Click += SignInClicked;
-            
-            username_txt.Text = usertext;
-            password_txt.Text = passwordtext;
 
+            // Attach event handlers for focus events
             username_txt.GotFocus += RemoveUserText;
             password_txt.GotFocus += RemovePasswordText;
 
+            // Attach event handlers for lost focus events
             username_txt.LostFocus += AddUserText;
             password_txt.LostFocus += AddPasswordText;
 
+            // Set the drop-down style for the combo boxes
             server_combo.DropDownStyle = ComboBoxStyle.DropDownList;
             port_combo.DropDownStyle = ComboBoxStyle.DropDownList;
 
+            // Set the version label to display the current version of the program
             version_label2.Text = Program.CurrentVersion;
 
         }
 
+        /// <summary>
+        /// Adds the default password text to the password text box if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void AddPasswordText(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(password_txt.Text))
@@ -51,15 +62,24 @@ namespace fmail
             }
         }
 
+        /// <summary>
+        /// Adds the default username text to the username text box if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void AddUserText(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(username_txt.Text))
             {
                 username_txt.Text = usertext;
-            }
-                       
+            }                       
         }
 
+        /// <summary>
+        /// Removes the default password text from the password text box when it matches the predefined default text.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void RemovePasswordText(object sender, EventArgs e)
         {
             if (password_txt.Text == passwordtext)
@@ -69,6 +89,11 @@ namespace fmail
             }
         }
 
+        /// <summary>
+        /// Removes the default username text from the username text box when it matches the predefined default text.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void RemoveUserText(object sender, EventArgs e)
         {
             if (username_txt.Text == usertext)
@@ -202,10 +227,7 @@ namespace fmail
             { 
                 sslOptions = SecureSocketOptions.SslOnConnect;
             }
-
-            //Program.ImapClientConnection.Host = host;
-            //Program.SmtpClientConnection.Host = host;
-
+                       
             Program.ImapClientConnection.Port = port;
             Program.SmtpClientConnection.Port = Program.SmtpPortOptions[1];
 

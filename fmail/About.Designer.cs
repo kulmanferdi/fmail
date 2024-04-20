@@ -33,8 +33,8 @@
             this.version_label2 = new System.Windows.Forms.Label();
             this.version_label = new System.Windows.Forms.Label();
             this.iconbox = new System.Windows.Forms.PictureBox();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.git_btn = new System.Windows.Forms.Button();
+            this.src_label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.iconbox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,28 +81,33 @@
             this.iconbox.TabIndex = 7;
             this.iconbox.TabStop = false;
             // 
-            // dateTimePicker1
-            // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(906, 308);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
-            this.dateTimePicker1.TabIndex = 8;
-            // 
             // git_btn
             // 
-            this.git_btn.Location = new System.Drawing.Point(438, 580);
+            this.git_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.git_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.git_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.git_btn.Location = new System.Drawing.Point(857, 578);
             this.git_btn.Name = "git_btn";
-            this.git_btn.Size = new System.Drawing.Size(75, 23);
+            this.git_btn.Size = new System.Drawing.Size(75, 30);
             this.git_btn.TabIndex = 9;
             this.git_btn.Text = "GitHub";
             this.git_btn.UseVisualStyleBackColor = true;
+            // 
+            // src_label
+            // 
+            this.src_label.AutoSize = true;
+            this.src_label.Location = new System.Drawing.Point(756, 587);
+            this.src_label.Name = "src_label";
+            this.src_label.Size = new System.Drawing.Size(95, 13);
+            this.src_label.TabIndex = 10;
+            this.src_label.Text = "View source code:";
             // 
             // About
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.src_label);
             this.Controls.Add(this.git_btn);
-            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.version_label2);
             this.Controls.Add(this.version_label);
             this.Controls.Add(this.title_lbl);
@@ -121,7 +126,7 @@
         private System.Windows.Forms.Label version_label2;
         private System.Windows.Forms.Label version_label;
         private System.Windows.Forms.PictureBox iconbox;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.Button git_btn;
+        private System.Windows.Forms.Label src_label;
     }
 }

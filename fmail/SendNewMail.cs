@@ -26,10 +26,7 @@ namespace fmail
             InitializeComponent();
 
             // Set default values for textboxes using placeholders array
-            to.Text = placeholders[0];
-            cc.Text = placeholders[1];
-            bcc.Text = placeholders[2];
-            subject.Text = placeholders[3];
+            SetPlaceholders();
 
             // Add event handlers for when textboxes gain focus to remove placeholder text
             to.GotFocus += RemoveToText;
@@ -61,7 +58,10 @@ namespace fmail
             attachedfiles.MaximumSize = new System.Drawing.Size(300, 0);
             attachedfiles.AutoSize = true;
             attachremove.Enabled = false;
+
+            // Init label content
             attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+            attachedfiles.Text = "";
 
 
         }
@@ -214,177 +214,234 @@ namespace fmail
             }
             finally
             {
-                to.Text = placeholders[0];
-                cc.Text = placeholders[1];
-                bcc.Text = placeholders[2];
-
-                subject.Text = placeholders[3];
-                body.Text = "";
+                SetPlaceholders();
 
                 if (attachments.Count > 0)
                 {
-                    attachfiles.Text = "";
-                    attachments.Clear();
-                    attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+                   RemoveStuff();
                 }
                 client.Dispose();
             }
 
-                //theoretically, the message should be sent
-            }
+            //theoretically, the message should be sent
+        }
 
-            /// <summary>
-            /// Sets the recipients (To, Cc, Bcc) of a MimeMessage based on the content of a TextBox.
-            /// </summary>
-            /// <param name="t">The TextBox containing email addresses.</param>
-            /// <param name="m">The MimeMessage to which recipients will be added.</param>
-            private void SetRecepients(TextBox t, MimeMessage m)
+        /// <summary>
+        /// Sets the recipients (To, Cc, Bcc) of a MimeMessage based on the content of a TextBox.
+        /// </summary>
+        /// <param name="t">The TextBox containing email addresses.</param>
+        /// <param name="m">The MimeMessage to which recipients will be added.</param>
+        private void SetRecepients(TextBox t, MimeMessage m)
+        {
+            // Check if the TextBox is empty or doesn't contain '@', indicating an invalid email address
+            if (!t.Text.Contains("@") && t.Text != "")
             {
-                // Check if the TextBox is empty or doesn't contain '@', indicating an invalid email address
-                if (!t.Text.Contains("@") && t.Text != "")
-                {
-                    MessageBox.Show(
-                        "Error",
-                        "Invalid email address.",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                        );
-                    return;
-                }
-
-                // If the TextBox is empty, return without further processing
-                if (t.Text == "") return;
-
-                // Handle special characters for recipient separation ('##', '#', '-', ',')
-                if (t.Text.Contains("##"))
-                {
-                    bcc.Text = bcc.Text.Replace("##", ";");
-                }
-
-                if (t.Text.Contains("#"))
-                {
-                    t.Text = t.Text.Replace("#", ";");
-                }
-
-                if (t.Text.Contains("-"))
-                {
-                    t.Text = t.Text.Replace("-", ";");
-                }
-
-                if (t.Text.Contains(","))
-                {
-                    t.Text = t.Text.Replace("-", ";");
-                }
-
-                // Split the TextBox content into individual recipients
-                string TEXT = t.Text;
-                string[] temp_recepients = TEXT.Split(';');
-
-                // Determine the recipient type (To, Cc, Bcc) based on the TextBox's name
-                if (t.Name == "to")
-                {
-                    // Add each recipient to the 'To' collection of the MimeMessage
-                    foreach (var recepient in temp_recepients)
-                    {
-                        string[] temp = recepient.Split('@');
-                        m.To.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
-                    }
-                }
-                else if (t.Name == "cc")
-                {
-                    // Add each recipient to the 'Cc' collection of the MimeMessage
-                    foreach (var recepient in temp_recepients)
-                    {
-                        string[] temp = recepient.Split('@');
-                        m.Cc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
-                    }
-                }
-                else if (t.Name == "bcc")
-                {
-                    // Add each recipient to the 'Bcc' collection of the MimeMessage
-                    foreach (var recepient in temp_recepients)
-                    {
-                        string[] temp = recepient.Split('@');
-                        m.Bcc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
-                    }
-                }
-
+                MessageBox.Show(
+                    "Error",
+                    "Invalid email address.",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                    );
+                return;
             }
 
-            /// <summary>
-            /// Event handler for attaching files to the email.
-            /// </summary>
-            /// <param name="sender">The object that triggered the event.</param>
-            /// <param name="e">The event arguments.</param>
-            private void Attach(object sender, EventArgs e)
+            // If the TextBox is empty, return without further processing
+            if (t.Text == "") return;
+
+            // Handle special characters for recipient separation ('##', '#', '-', ',')
+            if (t.Text.Contains("##"))
             {
-                // Create a new instance of OpenFileDialog to allow users to select files
-                OpenFileDialog openFileDialog = new OpenFileDialog();
-                // Set the filter to display all files
-                openFileDialog.Filter = "All files (*.*)|*.*";
-                openFileDialog.Multiselect = true;
-                openFileDialog.Title = "Select file(s) to attach";
-                // If the user selects a file and clicks OK
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    // Get the path of the selected file(s)               
-                    foreach (var file in openFileDialog.FileNames)
-                    {
-                        // Add the path of the selected file to the list of attachments
-                        attachments.Add(file);
-
-                        // Update the attached files label to display the path of the selected file
-                        attachedfiles.Text = (file + ";\n");
-
-                        // Enable the remove attachment button
-                        attachremove.Enabled = true;
-                    }
-
-                }
-                attachedcount.Text = "("+attachments.Count.ToString()+")";
+                bcc.Text = bcc.Text.Replace("##", ";");
             }
 
-            private void Remove(object sender, EventArgs e)
+            if (t.Text.Contains("#"))
             {
-                attachments.Clear();
-                attachedfiles.Text = "";
-                attachremove.Enabled = false;
-                attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+                t.Text = t.Text.Replace("#", ";");
             }
+
+            if (t.Text.Contains("-"))
+            {
+                t.Text = t.Text.Replace("-", ";");
+            }
+
+            if (t.Text.Contains(","))
+            {
+                t.Text = t.Text.Replace("-", ";");
+            }
+
+            // Split the TextBox content into individual recipients
+            string TEXT = t.Text;
+            string[] temp_recepients = TEXT.Split(';');
+
+            // Determine the recipient type (To, Cc, Bcc) based on the TextBox's name
+            if (t.Name == "to")
+            {
+                // Add each recipient to the 'To' collection of the MimeMessage
+                foreach (var recepient in temp_recepients)
+                {
+                    string[] temp = recepient.Split('@');
+                    m.To.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                }
+            }
+            else if (t.Name == "cc")
+            {
+                // Add each recipient to the 'Cc' collection of the MimeMessage
+                foreach (var recepient in temp_recepients)
+                {
+                    string[] temp = recepient.Split('@');
+                    m.Cc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                }
+            }
+            else if (t.Name == "bcc")
+            {
+                // Add each recipient to the 'Bcc' collection of the MimeMessage
+                foreach (var recepient in temp_recepients)
+                {
+                    string[] temp = recepient.Split('@');
+                    m.Bcc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Event handler for attaching files to the email.
+        /// </summary>
+        /// <param name="sender">The object that triggered the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void Attach(object sender, EventArgs e)
+        {
+            // Create a new instance of OpenFileDialog to allow users to select files
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Set the filter to display all files, enable multi-select, and set the title of the dialog
+            openFileDialog.Filter = "All files (*.*)|*.*";
+            openFileDialog.Multiselect = true;
+            openFileDialog.Title = "Select file(s) to attach";
+
+            // If the user selects a file and clicks OK
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // Get the path of the selected file(s)               
+                foreach (var file in openFileDialog.FileNames)
+                {
+                    // Add the path of the selected file to the list of attachments
+                    attachments.Add(file);
+
+                    // Update the attached files label to display the path of the selected file
+                    attachedfiles.Text = (file + ";\n");
+
+                    // Enable the remove attachment button
+                    attachremove.Enabled = true;
+                }
+
+            }
+
+            // Update the count of attachments
+            attachedcount.Text = "("+attachments.Count.ToString()+")";
+        }
+
+        /// <summary>
+        /// Clears the list of attachments, updates the attached files text box, disables the remove button,
+        /// and updates the count of attachments.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        private void Remove(object sender, EventArgs e)
+        {
+           RemoveStuff();
+        }
+
+        /// <summary>
+        /// Removes various elements such as attachments, placeholder texts, and disables associated buttons.
+        /// </summary>
+        private void RemoveStuff()
+        {
+            // Clear the list of attachments
+            attachments.Clear();
+
+            // Clear the attached files text box
+            attachedfiles.Text = "";
+
+            // Disable the remove attachment button
+            attachremove.Enabled = false;
+
+            // Update the count of attachments
+            attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+        }
+
+        /// <summary>
+        /// Sets default placeholder values for text boxes.
+        /// </summary>
+        private void SetPlaceholders()
+        {
+            // Set default values for textboxes using placeholders array
+            to.Text = placeholders[0];
+            cc.Text = placeholders[1];
+            bcc.Text = placeholders[2];
+            subject.Text = placeholders[3];
+            body.Text = placeholders[4];
+        }
 
         //creating the methods for the event handlers
+
+        /// <summary>
+        /// Removes the placeholder text from the "To" field when it matches the predefined placeholder.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
         public void RemoveToText(object sender, EventArgs e)
+        {
+            if (to.Text == placeholders[0])
             {
-                if (to.Text == placeholders[0])
-                {
-                    to.Text = "";
-                }
+                to.Text = "";
             }
+        }
 
-            public void RemoveCcText(object sender, EventArgs e)
+        /// <summary>
+        /// Removes the placeholder text from the "Cc" field when it matches the predefined placeholder.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void RemoveCcText(object sender, EventArgs e)
+        {
+            if (cc.Text == placeholders[1])
             {
-                if (cc.Text == placeholders[1])
-                {
-                    cc.Text = "";
-                }
+                cc.Text = "";
             }
+        }
 
-            public void RemoveBccText(object sender, EventArgs e)
+        /// <summary>
+        /// Removes the placeholder text from the "Bcc" field when it matches the predefined placeholder.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void RemoveBccText(object sender, EventArgs e)
+        {
+            if (bcc.Text == placeholders[2])
             {
-                if (bcc.Text == placeholders[2])
-                {
-                    bcc.Text = "";
-                }
+                bcc.Text = "";
             }
+        }
 
-            public void RemoveSubjectText(object sender, EventArgs e)
+        /// <summary>
+        /// Removes the placeholder text from the "Subject" field when it matches the predefined placeholder.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void RemoveSubjectText(object sender, EventArgs e)
+        {
+            if (subject.Text == placeholders[3])
             {
-                if (subject.Text == placeholders[3])
-                {
-                    subject.Text = "";
-                }
+                subject.Text = "";
             }
+        }
 
+        /// <summary>
+        /// Removes the placeholder text from the "Body" field when it matches the predefined placeholder.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
         private void RemoveBodyText(object sender, EventArgs e)
         {
             if (body.Text == placeholders[4])
@@ -393,43 +450,69 @@ namespace fmail
             }
         }
 
+        /// <summary>
+        /// Adds the placeholder text to the "To" field if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
         public void AddToText(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(to.Text))
             {
-                if (string.IsNullOrWhiteSpace(to.Text))
-                {
-                    to.Text = placeholders[0];
-                }
+                to.Text = placeholders[0];
             }
+        }
 
-            public void AddCcText(object sender, EventArgs e)
+        /// <summary>
+        /// Adds the placeholder text to the "Cc" field if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void AddCcText(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(cc.Text))
             {
-                if (string.IsNullOrWhiteSpace(cc.Text))
-                {
-                    cc.Text = placeholders[1];
-                }
+                cc.Text = placeholders[1];
             }
+        }
 
-            public void AddBccText(object sender, EventArgs e)
+        /// <summary>
+        /// Adds the placeholder text to the "Bcc" field if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void AddBccText(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(bcc.Text))
             {
-                if (string.IsNullOrWhiteSpace(bcc.Text))
-                {
-                    bcc.Text = placeholders[2];
-                }
+                bcc.Text = placeholders[2];
             }
-            public void AddSubjectText(object sender, EventArgs e)
-            {
-                if (string.IsNullOrWhiteSpace(subject.Text))
-                {
-                    subject.Text = placeholders[3];
-                }
-            }       
+        }
 
-            private void AddBodyText(object sender, EventArgs e)
+        /// <summary>
+        /// Adds the placeholder text to the "Subject" field if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        public void AddSubjectText(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(subject.Text))
             {
-                if (string.IsNullOrWhiteSpace(body.Text))
-                {
-                    body.Text = placeholders[4];
-                }
+                subject.Text = placeholders[3];
             }
+        }
+
+        /// <summary>
+        /// Adds the placeholder text to the "Body" field if it's empty or contains only whitespace.
+        /// </summary>
+        /// <param name="sender">The object that raises the event.</param>
+        /// <param name="e">The event data.</param>
+        private void AddBodyText(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(body.Text))
+            {
+                body.Text = placeholders[4];
+            }
+        }
     }
 }

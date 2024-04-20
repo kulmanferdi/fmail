@@ -43,7 +43,7 @@
             // to
             // 
             this.to.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.to.Location = new System.Drawing.Point(53, 58);
+            this.to.Location = new System.Drawing.Point(53, 12);
             this.to.Name = "to";
             this.to.Size = new System.Drawing.Size(820, 26);
             this.to.TabIndex = 0;
@@ -51,7 +51,7 @@
             // cc
             // 
             this.cc.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.cc.Location = new System.Drawing.Point(53, 84);
+            this.cc.Location = new System.Drawing.Point(53, 44);
             this.cc.Name = "cc";
             this.cc.Size = new System.Drawing.Size(820, 26);
             this.cc.TabIndex = 1;
@@ -59,7 +59,7 @@
             // bcc
             // 
             this.bcc.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.bcc.Location = new System.Drawing.Point(53, 110);
+            this.bcc.Location = new System.Drawing.Point(53, 76);
             this.bcc.Name = "bcc";
             this.bcc.Size = new System.Drawing.Size(820, 26);
             this.bcc.TabIndex = 2;
@@ -67,7 +67,7 @@
             // subject
             // 
             this.subject.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.subject.Location = new System.Drawing.Point(53, 136);
+            this.subject.Location = new System.Drawing.Point(53, 108);
             this.subject.Name = "subject";
             this.subject.Size = new System.Drawing.Size(820, 26);
             this.subject.TabIndex = 3;
@@ -75,16 +75,16 @@
             // body
             // 
             this.body.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.body.Location = new System.Drawing.Point(53, 168);
+            this.body.Location = new System.Drawing.Point(53, 140);
             this.body.Multiline = true;
             this.body.Name = "body";
-            this.body.Size = new System.Drawing.Size(820, 275);
+            this.body.Size = new System.Drawing.Size(820, 341);
             this.body.TabIndex = 4;
             // 
             // attachfiles
             // 
             this.attachfiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.attachfiles.Location = new System.Drawing.Point(53, 446);
+            this.attachfiles.Location = new System.Drawing.Point(53, 487);
             this.attachfiles.Name = "attachfiles";
             this.attachfiles.Size = new System.Drawing.Size(90, 41);
             this.attachfiles.TabIndex = 5;
@@ -94,7 +94,7 @@
             // send
             // 
             this.send.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.send.Location = new System.Drawing.Point(783, 449);
+            this.send.Location = new System.Drawing.Point(783, 533);
             this.send.Name = "send";
             this.send.Size = new System.Drawing.Size(90, 42);
             this.send.TabIndex = 6;
@@ -104,7 +104,7 @@
             // attachedfiles
             // 
             this.attachedfiles.AutoSize = true;
-            this.attachedfiles.Location = new System.Drawing.Point(149, 449);
+            this.attachedfiles.Location = new System.Drawing.Point(149, 487);
             this.attachedfiles.Name = "attachedfiles";
             this.attachedfiles.Size = new System.Drawing.Size(66, 13);
             this.attachedfiles.TabIndex = 7;
@@ -113,7 +113,7 @@
             // attachedcount
             // 
             this.attachedcount.AutoSize = true;
-            this.attachedcount.Location = new System.Drawing.Point(149, 474);
+            this.attachedcount.Location = new System.Drawing.Point(149, 534);
             this.attachedcount.Name = "attachedcount";
             this.attachedcount.Size = new System.Drawing.Size(91, 13);
             this.attachedcount.TabIndex = 8;
@@ -122,7 +122,7 @@
             // attachremove
             // 
             this.attachremove.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.attachremove.Location = new System.Drawing.Point(53, 493);
+            this.attachremove.Location = new System.Drawing.Point(53, 534);
             this.attachremove.Name = "attachremove";
             this.attachremove.Size = new System.Drawing.Size(90, 41);
             this.attachremove.TabIndex = 9;

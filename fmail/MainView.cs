@@ -17,11 +17,13 @@ namespace fmail
         {
             InitializeComponent();
 
+            // Attach event handlers for the folder tree view and message list
             folderTreeView.FolderSelected += OnFolderSelected;
             messageList.MessageSelected += OnMessageSelected;
             DeleteMessage.Click += DeleteMessageFromInbox;
             Markasunread.Click += MarkAsUnRead;
 
+            // Attach event handlers for the navigation buttons
             inboxview_btn.Click += ShowInbox;
             sendmailview_btn.Click += ShowSendMail;
             settingsview_btn.Click += ShowSettings;
@@ -29,15 +31,19 @@ namespace fmail
             refresh_btn.Click += RefreshInbox;
             logout_btn.Click += Logout;
                         
+            // Set the initial view to the inbox
             sendNewMail1.Visible = false;
             settings1.Visible = false;
             about1.Visible = false;
+                        
         }
                
         private void ShowAbout(object sender, EventArgs e)
         {
-
+            // set the label text to "About"
             inbox_label.Text = "About";
+
+            // Hide the other user controls
             DeleteMessage.Visible = false;
             Markasunread.Visible = false;
             refresh_btn.Visible = false;            
@@ -47,13 +53,17 @@ namespace fmail
             webBrowser.Visible = false;
             settings1.Visible = false;
 
+            // Show the About user control
             about1.Visible = true;
             about1.BringToFront();
         }
 
         private void ShowSettings(object sender, EventArgs e)
         {
+            // set the label text to "Settings"
             inbox_label.Text = "Settings";
+
+            // Hide the other user controls
             DeleteMessage.Visible = false;
             Markasunread.Visible = false;
             refresh_btn.Visible = false;
@@ -63,6 +73,7 @@ namespace fmail
             webBrowser.Visible = false;
             about1.Visible = false;
 
+            // Show the Settings user control
             settings1.Visible = true;
             settings1.BringToFront();
         }
@@ -74,9 +85,10 @@ namespace fmail
 
         private void ShowSendMail(object sender, EventArgs e)
         {
-            sendNewMail1.Visible = true;
-            sendNewMail1.BringToFront();
+            // set the label text to "Send Mail"
+            inbox_label.Text = "Send Mail";
 
+            // Hide the other user controls
             DeleteMessage.Visible = false;
             refresh_btn.Visible = false;
             Markasunread.Visible = false;
@@ -86,21 +98,28 @@ namespace fmail
             settings1.Visible = false;
             about1.Visible = false;
 
-            inbox_label.Text = "Send Mail";
+            // Show the SendNewMail user control
+            sendNewMail1.Visible = true;
+            sendNewMail1.BringToFront();
         }
 
         private void ShowInbox(object sender, EventArgs e)
         {
+            // set the label text to "Your inbox"
             inbox_label.Text = "Your inbox";
+
+            // Hide the other user controls
+            settings1.Visible = false;
+            about1.Visible = false;
+            sendNewMail1.Visible = false;
+
+            // Show the inbox user controls
             folderTreeView.Visible = true;
             messageList.Visible = true;
             refresh_btn.Visible = true;
             webBrowser.Visible = true;
             DeleteMessage.Visible = true;
             Markasunread.Visible = true;
-            settings1.Visible = false;
-            about1.Visible = false;
-            sendNewMail1.Visible = false;
         }
 
         //Not working yet
@@ -338,6 +357,12 @@ namespace fmail
         }
         public UniqueId CurrentSelectedMessageUniqueId;
         public IMailFolder CurrentFolder;
+
+        /// <summary>
+        /// Event handler for when a message is selected, rendering the message in the web browser and marking it as "Seen".
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data containing information about the selected message.</param>
         void OnMessageSelected(object sender, MessageSelectedEventArgs e)
         {
             var command = new RenderMessageCommand(Program.ImapClientConnection, e.Folder, e.UniqueId, e.Body, webBrowser);
@@ -348,9 +373,17 @@ namespace fmail
             CurrentFolder = e.Folder;
         }
 
+        /// <summary>
+        /// Gets the unique identifier of the selected message.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data containing information about the selected message.</param>
+        /// <returns>The unique identifier of the selected message.</returns>
         UniqueId GetSelectedMessageIndex(object sender, MessageSelectedEventArgs e)
         {
             return e.UniqueId;
+
+            //yet to implement
         }      
       
 
@@ -370,14 +403,24 @@ namespace fmail
 
             Application.Exit();
         }
-        
-        public void Refresh()
+
+        /// <summary>
+        /// Refreshes the user interface by refreshing and loading the folders in the folder tree view.
+        /// </summary>
+        public override void Refresh()
         {
             folderTreeView.RefreshFolders();
             folderTreeView.LoadFolders();
         }
+
+        /// <summary>
+        /// Logs out the current user, disposing IMAP and SMTP client connections and clearing credentials.
+        /// </summary>
+        /// <param name="sender">The object that raised the event.</param>
+        /// <param name="e">The event data.</param>
         private void Logout(object sender, EventArgs e)
         {
+            // Prompt the user for confirmation before logging out
             DialogResult logout = MessageBox.Show(
                    "Logout",
                    "Are you sure you want to logout?",
@@ -385,17 +428,18 @@ namespace fmail
                    MessageBoxIcon.Question,
                    MessageBoxDefaultButton.Button1,
                    MessageBoxOptions.DefaultDesktopOnly
-                  );
+             );
+
+            // If the user confirms logout, dispose client connections and clear credentials
             if (logout == DialogResult.OK)
             {
                 Program.ImapClientConnection.Dispose();
                 Program.SmtpClientConnection.Dispose();
                 Program.ClearCredentials();
 
+                // Restart the application
                 Application.Restart();
-            }
-           
+            }           
         }
-
     }
 }
