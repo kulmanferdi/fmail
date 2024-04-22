@@ -14,7 +14,7 @@ namespace fmail
         private readonly string[] placeholders = new string[] { "To...", "Cc...", "Bcc...", "Subject...", "Enter your message here..." };
 
         //declaring the lists for the attachments       
-        private List<string> attachments;
+        private readonly List<string> attachments;
 
         /// <summary>
         /// Constructor for the SendNewMail class.
@@ -23,6 +23,7 @@ namespace fmail
         /// </summary>
         public SendNewMail()
         {
+            // Initialize the form components
             InitializeComponent();
 
             // Set default values for textboxes using placeholders array
@@ -63,7 +64,6 @@ namespace fmail
             attachedcount.Text = "(" + attachments.Count.ToString() + ")";
             attachedfiles.Text = "";
 
-
         }
              
         private void Send(object sender, EventArgs e)
@@ -74,24 +74,18 @@ namespace fmail
             int emptyCount = 0;
 
             bool subjectEmpty = string.IsNullOrWhiteSpace(subject.Text);
-            bool bodyEmpty = string.IsNullOrWhiteSpace(body.Text);
+            bool bodyEmpty = string.IsNullOrWhiteSpace(body.Text);           
 
-            //checking if the textboxes are empty, then clearing the placeholders
-            if (to.Text == placeholders[0])
-            {
-                to.Text = "";
-                emptyCount++;
-            }
-            if (cc.Text == placeholders[1])
-            {
-                cc.Text = "";
-                emptyCount++;
-            }
-            if (bcc.Text == placeholders[2])
-            {
-                bcc.Text = "";
-                emptyCount++;
-            }
+            //setting up the current message
+            MimeMessage currentMessage = new MimeMessage();
+
+            //setting up the sender
+            currentMessage.From.Add(new MailboxAddress(username, Program.SmtpClientConnection.Credentials.UserName));
+
+            //setting up the recepients
+            SetRecepients(to, currentMessage, emptyCount);
+            SetRecepients(cc, currentMessage, emptyCount);
+            SetRecepients(bcc, currentMessage, emptyCount);
             if (emptyCount == 3)
             {
                 MessageBox.Show("Error",
@@ -100,16 +94,6 @@ namespace fmail
                    MessageBoxIcon.Error
                );
             }
-
-            //setting up the current message
-            MimeMessage currentMessage = new MimeMessage();
-            currentMessage.To.Add(new MailboxAddress(username, Program.SmtpClientConnection.Credentials.UserName));
-            currentMessage.From.Add(new MailboxAddress(username, Program.SmtpClientConnection.Credentials.UserName));
-
-            //setting up the recepients
-            SetRecepients(to, currentMessage);
-            SetRecepients(cc, currentMessage);
-            SetRecepients(bcc, currentMessage);
 
             // Check if the subject is empty
             if (subjectEmpty)
@@ -177,18 +161,19 @@ namespace fmail
             //setting up the smtp clien and sending the message
             //configuring the connection
             var client = new SmtpClient();
-            var smtpPort = Program.SmtpPortOptions[1];
+            _ = Program.SmtpPortOptions[1];
+            int portNumber;
             if (Program.SmtpPortChanged)
             {
-                smtpPort = Settings.smtpPort;
+                portNumber = Settings.smtpPort;
             }
             else
             {
-                smtpPort = Program.SmtpClientConnection.Port;
+                portNumber = Program.SmtpClientConnection.Port;
             }
             client.Connect(
                 Program.SmtpClientConnection.Host,
-                smtpPort,
+                portNumber,
                 Program.SmtpClientConnection.SslOptions
             );
             client.Authenticate(Program.SmtpClientConnection.Credentials);
@@ -223,7 +208,8 @@ namespace fmail
                 client.Dispose();
             }
 
-            //theoretically, the message should be sent
+            //theoretically, the message should be sent,
+            //if not you may have mistyped the email address
         }
 
         /// <summary>
@@ -231,9 +217,21 @@ namespace fmail
         /// </summary>
         /// <param name="t">The TextBox containing email addresses.</param>
         /// <param name="m">The MimeMessage to which recipients will be added.</param>
-        private void SetRecepients(TextBox t, MimeMessage m)
-        {
-            // Check if the TextBox is empty or doesn't contain '@', indicating an invalid email address
+        private void SetRecepients(TextBox t, MimeMessage m,int empty)
+        {    
+            // Check if the TextBox contains a placeholder value
+            foreach (var placeholder in placeholders)
+            {
+                if (placeholder == t.Text)
+                {           
+                    t.Text = "";
+                    empty++;
+                    return; 
+                }
+
+            }
+
+            // Check if the TextBox doesn't contain '@', indicating an invalid email address
             if (!t.Text.Contains("@") && t.Text != "")
             {
                 MessageBox.Show(
@@ -244,10 +242,6 @@ namespace fmail
                     );
                 return;
             }
-
-            // If the TextBox is empty, return without further processing
-            if (t.Text == "") return;
-
             // Handle special characters for recipient separation ('##', '#', '-', ',')
             if (t.Text.Contains("##"))
             {
