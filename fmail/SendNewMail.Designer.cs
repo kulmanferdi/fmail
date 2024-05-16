@@ -38,6 +38,11 @@
             this.attachedfiles = new System.Windows.Forms.Label();
             this.attachedcount = new System.Windows.Forms.Label();
             this.attachremove = new System.Windows.Forms.Button();
+            this.draftCheck = new System.Windows.Forms.CheckBox();
+            this.status_label = new System.Windows.Forms.Label();
+            this.sendingprogress = new System.Windows.Forms.ProgressBar();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.attachment_list = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // to
@@ -104,16 +109,16 @@
             // attachedfiles
             // 
             this.attachedfiles.AutoSize = true;
-            this.attachedfiles.Location = new System.Drawing.Point(149, 487);
+            this.attachedfiles.Location = new System.Drawing.Point(146, 581);
             this.attachedfiles.Name = "attachedfiles";
-            this.attachedfiles.Size = new System.Drawing.Size(66, 13);
+            this.attachedfiles.Size = new System.Drawing.Size(69, 13);
             this.attachedfiles.TabIndex = 7;
-            this.attachedfiles.Text = "Attachments";
+            this.attachedfiles.Text = "Attachments:";
             // 
             // attachedcount
             // 
             this.attachedcount.AutoSize = true;
-            this.attachedcount.Location = new System.Drawing.Point(149, 534);
+            this.attachedcount.Location = new System.Drawing.Point(218, 581);
             this.attachedcount.Name = "attachedcount";
             this.attachedcount.Size = new System.Drawing.Size(91, 13);
             this.attachedcount.TabIndex = 8;
@@ -129,10 +134,48 @@
             this.attachremove.Text = "Remove attachments";
             this.attachremove.UseVisualStyleBackColor = true;
             // 
+            // draftCheck
+            // 
+            this.draftCheck.AutoSize = true;
+            this.draftCheck.Location = new System.Drawing.Point(783, 510);
+            this.draftCheck.Name = "draftCheck";
+            this.draftCheck.Size = new System.Drawing.Size(92, 17);
+            this.draftCheck.TabIndex = 10;
+            this.draftCheck.Text = "Save to drafts";
+            this.draftCheck.UseVisualStyleBackColor = true;
+            // 
+            // status_label
+            // 
+            this.status_label.AutoSize = true;
+            this.status_label.Location = new System.Drawing.Point(613, 562);
+            this.status_label.Name = "status_label";
+            this.status_label.Size = new System.Drawing.Size(37, 13);
+            this.status_label.TabIndex = 11;
+            this.status_label.Text = "Status";
+            // 
+            // sendingprogress
+            // 
+            this.sendingprogress.Location = new System.Drawing.Point(783, 581);
+            this.sendingprogress.Name = "sendingprogress";
+            this.sendingprogress.Size = new System.Drawing.Size(90, 14);
+            this.sendingprogress.TabIndex = 12;
+            // 
+            // attachment_list
+            // 
+            this.attachment_list.FormattingEnabled = true;
+            this.attachment_list.Location = new System.Drawing.Point(149, 487);
+            this.attachment_list.Name = "attachment_list";
+            this.attachment_list.Size = new System.Drawing.Size(305, 82);
+            this.attachment_list.TabIndex = 13;
+            // 
             // SendNewMail
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.attachment_list);
+            this.Controls.Add(this.sendingprogress);
+            this.Controls.Add(this.status_label);
+            this.Controls.Add(this.draftCheck);
             this.Controls.Add(this.attachremove);
             this.Controls.Add(this.attachedcount);
             this.Controls.Add(this.attachedfiles);
@@ -162,5 +205,10 @@
         private System.Windows.Forms.Label attachedfiles;
         private System.Windows.Forms.Label attachedcount;
         private System.Windows.Forms.Button attachremove;
+        private System.Windows.Forms.CheckBox draftCheck;
+        private System.Windows.Forms.Label status_label;
+        private System.Windows.Forms.ProgressBar sendingprogress;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ListBox attachment_list;
     }
 }

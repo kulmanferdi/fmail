@@ -1,10 +1,17 @@
-﻿using MimeKit;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
+using MailKit;
+using MimeKit;
 using MailKit.Net.Smtp;
+using MailKit.Net.Imap;
+
+using HtmlAgilityPack;
+using HtmlDocument = HtmlAgilityPack.HtmlDocument;
 
 namespace fmail
 {
@@ -61,39 +68,45 @@ namespace fmail
             attachremove.Enabled = false;
 
             // Init label content
-            attachedcount.Text = "(" + attachments.Count.ToString() + ")";
-            attachedfiles.Text = "";
+            UpdateAttachedStatus();
+            //attachedfiles.Text = "";
+            status_label.Text = "";
 
+            //progress bar
+            //backgroundWorker.RunWorkerAsync();
         }
              
-        private void Send(object sender, EventArgs e)
+        private async void Send(object sender, EventArgs e)
         {
-            //declaring the local variables used in the method
-            string username = Login.GetUsername();
+            //status_label.Visible = true;
+            //sendingprogress.Visible = true;
 
+            //status_label.Text = "Initializing...";
+            //backgroundWorker.ReportProgress(5);
+            //declaring the local variables used in the method       
             int emptyCount = 0;
 
-            bool subjectEmpty = string.IsNullOrWhiteSpace(subject.Text);
-            bool bodyEmpty = string.IsNullOrWhiteSpace(body.Text);           
+            string username = Login.GetUsername();
 
+            bool subjectEmpty = string.IsNullOrWhiteSpace(subject.Text);
+            bool bodyEmpty = string.IsNullOrWhiteSpace(body.Text);
+            bool draft = false;
+
+            //backgroundWorker.ReportProgress(15);
+            //status_label.Text = "Creating the message";
             //setting up the current message
             MimeMessage currentMessage = new MimeMessage();
 
             //setting up the sender
             currentMessage.From.Add(new MailboxAddress(username, Program.SmtpClientConnection.Credentials.UserName));
 
+
             //setting up the recepients
             SetRecepients(to, currentMessage, emptyCount);
             SetRecepients(cc, currentMessage, emptyCount);
             SetRecepients(bcc, currentMessage, emptyCount);
-            if (emptyCount == 3)
-            {
-                MessageBox.Show("Error",
-                   "At least 1 recepient address is required.",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Error
-               );
-            }
+            //status_label.Text = "Setting recepients...";
+            //backgroundWorker.ReportProgress(30);
 
             // Check if the subject is empty
             if (subjectEmpty)
@@ -116,9 +129,10 @@ namespace fmail
             }
             else
             {
+                //status_label.Text = "Subject is set";
+                //backgroundWorker.ReportProgress(50);
                 currentMessage.Subject = subject.Text;
             }
-
             // Check if the body is empty or if there are no attachments
             if (bodyEmpty && (body.Text == null || attachments.Count == 0))
             {
@@ -146,7 +160,12 @@ namespace fmail
                 var builder = new BodyBuilder();
 
                 // Set body text
-                builder.TextBody = body.Text;
+                if (ContainsHTMLElements(body.Text))
+                {
+                    builder.HtmlBody = body.Text;
+                }
+                else builder.TextBody = body.Text;
+                
 
                 // Add attachments
                 foreach (var attachment in attachments)
@@ -157,7 +176,16 @@ namespace fmail
                 // Set the message body
                 currentMessage.Body = builder.ToMessageBody();
             }
+            //status_label.Text = "Message body created";
+            //backgroundWorker.ReportProgress(66);
+            //if all the fields are empty, the message will be saved to drafts
+            if (emptyCount == 3)
+            {
+                draft = true;
+            }
 
+            //backgroundWorker.ReportProgress(78);
+            //status_label.Text = "Opening client connection";
             //setting up the smtp clien and sending the message
             //configuring the connection
             var client = new SmtpClient();
@@ -177,12 +205,20 @@ namespace fmail
                 Program.SmtpClientConnection.SslOptions
             );
             client.Authenticate(Program.SmtpClientConnection.Credentials);
-
+            //status_label.Text = "Successfull authentication";
+            //backgroundWorker.ReportProgress(82);
             try
             {
+                if (draft | draftCheck.Checked)
+                {                    
+                    AddToDrafts(currentMessage, Program.ImapClientConnection.Credentials.UserName, Program.ImapClientConnection.Credentials.Password);
+                    
+                }
                 client.Send(currentMessage);
 
-                MessageBox.Show("Mail Sent Successfully!");
+                //MessageBox.Show("Mail Sent Successfully!");
+                //status_label.Text = "Mail Sent Successfully!";
+                //backgroundWorker.ReportProgress(100);
             }
             catch (MailSendingException ex)
             {
@@ -203,13 +239,16 @@ namespace fmail
 
                 if (attachments.Count > 0)
                 {
-                   RemoveStuff();
+                    RemoveStuff();
                 }
                 client.Dispose();
             }
 
             //theoretically, the message should be sent,
             //if not you may have mistyped the email address
+            
+            //sendingprogress.Visible = false;
+            //status_label.Visible = false;
         }
 
         /// <summary>
@@ -217,8 +256,11 @@ namespace fmail
         /// </summary>
         /// <param name="t">The TextBox containing email addresses.</param>
         /// <param name="m">The MimeMessage to which recipients will be added.</param>
-        private void SetRecepients(TextBox t, MimeMessage m,int empty)
+        private void SetRecepients(System.Windows.Forms.TextBox t, MimeMessage m, int empty)
         {    
+            string me = CheckShortcut(t.Text, "me");
+            string username = Login.GetUsername();
+
             // Check if the TextBox contains a placeholder value
             foreach (var placeholder in placeholders)
             {
@@ -242,12 +284,7 @@ namespace fmail
                     );
                 return;
             }
-            // Handle special characters for recipient separation ('##', '#', '-', ',')
-            if (t.Text.Contains("##"))
-            {
-                bcc.Text = bcc.Text.Replace("##", ";");
-            }
-
+            // Handle special characters for recipient separation ('#', '-', ',', '&', '_')           
             if (t.Text.Contains("#"))
             {
                 t.Text = t.Text.Replace("#", ";");
@@ -260,7 +297,17 @@ namespace fmail
 
             if (t.Text.Contains(","))
             {
-                t.Text = t.Text.Replace("-", ";");
+                t.Text = t.Text.Replace(",", ";");
+            }
+
+            if (t.Text.Contains("&"))
+            {
+                t.Text = t.Text.Replace("&", ";");
+            }
+
+            if (t.Text.Contains("_"))
+            {
+                t.Text = t.Text.Replace("_", ";");
             }
 
             // Split the TextBox content into individual recipients
@@ -273,8 +320,13 @@ namespace fmail
                 // Add each recipient to the 'To' collection of the MimeMessage
                 foreach (var recepient in temp_recepients)
                 {
-                    string[] temp = recepient.Split('@');
-                    m.To.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    if (recepient == me) m.To.Add(new MailboxAddress(UTF8Encoding.UTF8, username, Program.ImapClientConnection.Credentials.UserName));
+                    else
+                    {
+                        string[] temp = recepient.Split('@');
+                        m.To.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    }
+                    
                 }
             }
             else if (t.Name == "cc")
@@ -282,8 +334,12 @@ namespace fmail
                 // Add each recipient to the 'Cc' collection of the MimeMessage
                 foreach (var recepient in temp_recepients)
                 {
-                    string[] temp = recepient.Split('@');
-                    m.Cc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    if (recepient == me) m.Cc.Add(new MailboxAddress(UTF8Encoding.UTF8, username, Program.ImapClientConnection.Credentials.UserName));
+                    else
+                    {
+                        string[] temp = recepient.Split('@');
+                        m.Cc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    }
                 }
             }
             else if (t.Name == "bcc")
@@ -291,8 +347,12 @@ namespace fmail
                 // Add each recipient to the 'Bcc' collection of the MimeMessage
                 foreach (var recepient in temp_recepients)
                 {
-                    string[] temp = recepient.Split('@');
-                    m.Bcc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    if (recepient == me) m.Bcc.Add(new MailboxAddress(UTF8Encoding.UTF8, username, Program.ImapClientConnection.Credentials.UserName));
+                    else
+                    {
+                        string[] temp = recepient.Split('@');
+                        m.Bcc.Add(new MailboxAddress(UTF8Encoding.UTF8, temp[0], recepient));
+                    }
                 }
             }
 
@@ -323,7 +383,8 @@ namespace fmail
                     attachments.Add(file);
 
                     // Update the attached files label to display the path of the selected file
-                    attachedfiles.Text = (file + ";\n");
+                    //attachedfiles.Text = (file + ";\n");
+                    attachment_list.Items.Add(file);
 
                     // Enable the remove attachment button
                     attachremove.Enabled = true;
@@ -332,7 +393,50 @@ namespace fmail
             }
 
             // Update the count of attachments
-            attachedcount.Text = "("+attachments.Count.ToString()+")";
+            UpdateAttachedStatus();
+        }
+
+        /// <summary>
+        /// Adds the specified email message to the Drafts folder of the email client.
+        /// If the Drafts folder doesn't exist, it creates one and then adds the message.       
+        /// Adds an email message to the drafts folder of the user's email account.
+        /// </summary>
+        /// <param name="message">The MimeMessage representing the email message to be added to drafts.</param>
+        /// <param name="username">The username of the email account.</param>
+        /// <param name="password">The password of the email account.</param>
+        public void AddToDrafts(MimeMessage message,string username, string password)
+        {
+                       
+            using (var client = new ImapClient())
+            {                
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                
+                client.Connect(
+                   Program.ImapClientConnection.Host,
+                   Program.ImapClientConnection.Port,
+                   Program.SmtpClientConnection.SslOptions
+                );
+                
+                client.Authenticate(username, password);
+                
+                var draftFolder = client.GetFolder(SpecialFolder.Drafts);
+                
+                if (draftFolder != null)
+                {
+                    draftFolder.Open(FolderAccess.ReadWrite);
+                    draftFolder.Append(message, MessageFlags.Draft);
+                    draftFolder.Expunge();
+                }
+                else
+                {
+                    var toplevel = client.GetFolder(client.PersonalNamespaces[0]);
+                    var DraftFolder = toplevel.Create(SpecialFolder.Drafts.ToString(), true);
+
+                    DraftFolder.Open(FolderAccess.ReadWrite);
+                    DraftFolder.Append(message, MessageFlags.Draft);
+                    DraftFolder.Expunge();
+                }
+            }               
         }
 
         /// <summary>
@@ -355,13 +459,20 @@ namespace fmail
             attachments.Clear();
 
             // Clear the attached files text box
-            attachedfiles.Text = "";
+            //attachedfiles.Text = "";
 
             // Disable the remove attachment button
             attachremove.Enabled = false;
 
             // Update the count of attachments
             attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+
+            // Clear the list of attachments
+            attachment_list.Items.Clear();
+
+            //reset the status label
+            Thread.Sleep(10);
+            status_label.Text = "";
         }
 
         /// <summary>
@@ -508,5 +619,78 @@ namespace fmail
                 body.Text = placeholders[4];
             }
         }
+
+        /*private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // Change the value of the ProgressBar to the BackgroundWorker progress.
+            sendingprogress.Value = e.ProgressPercentage;
+            // Set the text.
+            this.Text = e.ProgressPercentage.ToString();
+        }*/
+
+
+        /// <summary>
+        /// Checks if the textbox contains a shortcut and returns the shortcut if it exists.
+        /// </summary>
+        /// <param name="textbox">The content of a textbox</param>
+        /// <param name="str">The shortcut string.</param>
+        private string CheckShortcut(string textbox, string str)
+        {
+            string[] separators = { ";" };
+            string[] parts = textbox.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string part in parts)
+            {
+                if (part.Trim() == str)
+                {
+                    return str;
+                }
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Returns true if the HTML document contains only text.
+        /// </summary>
+        /// <param name="rootNode">Html root onde</param>
+        private static bool HtmlIsJustText(HtmlNode rootNode)
+        {
+            return rootNode.Descendants().All(n => n.NodeType == HtmlNodeType.Text);
+        }
+
+        /// <summary>
+        /// Checks if the text contains HTML elements.
+        /// </summary>
+        /// <param name="text">The text that may contain HTML elements</param>
+        public static bool ContainsHTMLElements(string text)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(text);
+            return !HtmlIsJustText(doc.DocumentNode);
+        }
+
+        /// <summary>
+        /// Updates the displayed count of attachments.
+        /// </summary>
+        private void UpdateAttachedStatus()
+        {
+            // Update the text of the attachedcount control to display the number of attachments.
+            // The count of attachments is obtained from the attachments list and converted to a string.
+            // The count is enclosed in parentheses for visual clarity.
+            attachedcount.Text = "(" + attachments.Count.ToString() + ")";
+        }
+
+        /// <summary>
+        /// Hide the progress bar and status label when the user control is shown.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            sendingprogress.Visible = false;            
+
+            base.OnVisibleChanged(e);
+        }
     }
 }
+

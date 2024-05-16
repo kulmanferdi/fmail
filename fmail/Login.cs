@@ -15,11 +15,7 @@ namespace fmail
 
         public Login()
         {
-            InitializeComponent();            
-            
-            // Set the default text for the username and password fields
-            username_txt.Text = usertext;
-            password_txt.Text = passwordtext;
+            InitializeComponent();
 
             // Attach event handlers
             enableSSL_chk.CheckedChanged += EnableSSLChanged;
@@ -112,8 +108,9 @@ namespace fmail
             }           
             port_combo.Text = Program.ImapClientConnection.Port.ToString();
             enableSSL_chk.Checked = Program.ImapClientConnection.SslOptions == SecureSocketOptions.SslOnConnect;
-            username_txt.Text = Program.ImapClientConnection.Credentials.UserName;
-            password_txt.Text = Program.ImapClientConnection.Credentials.Password;
+            username_txt.Text = usertext;
+            password_txt.PasswordChar = '\0';
+            password_txt.Text = passwordtext;
 
             base.OnShown(e);
         }
@@ -253,11 +250,19 @@ namespace fmail
             username_txt.Clear();
             password_txt.Clear();                        
         }
-        public static string GetUsername()
-        {  
-            string[] temp = user.Split('@');
 
-            return temp[0];
+        /// <summary>
+        /// Extracts the username from an email address.
+        /// </summary>
+        /// <param name="email">The email address from which to extract the username.</param>
+        /// <returns>The extracted username.</returns>
+        public static string GetUsername()
+        {
+            // Split the email address by '@' symbol.
+            string[] parts = user.Split('@');
+
+            // Return the first part of the split array, which represents the username.
+            return parts[0];
         }
     }
 }

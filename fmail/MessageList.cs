@@ -200,13 +200,14 @@ namespace fmail
                 if (folder.Count > 0)
                 {
                     int currentCount;
-
+                   
                     lock (messageList.messages)
                     {
                         currentCount = messageList.messages.Count;
                     }
 
                     summaries = folder.Fetch(currentCount, currentCount + BatchSize, request, cancellationToken);
+                    //messageList.messages.Reverse();
 
                     // Proxy the PostProcess() method call to the GUI thread.
                     Program.RunOnMainThread(messageList, PostProcess);
@@ -217,8 +218,9 @@ namespace fmail
             {
                 lock (messageList.messages)
                 {
-                    messageList.AddMessageSummaries(folder, summaries);
+                    messageList.AddMessageSummaries(folder, summaries);                    
                 }
+                //messageList.messages.Reverse();
             }
         }
 
@@ -281,6 +283,8 @@ namespace fmail
             Clear();
             foreach (var node in Nodes)
                 RefreshMessage((TreeNode)node);
+
+            //FetchNewMessages(folder);
         }
         
         public void Expunge()

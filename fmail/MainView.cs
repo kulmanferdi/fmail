@@ -8,6 +8,7 @@ using MimeKit.Text;
 
 using MailKit;
 using MailKit.Net.Imap;
+using MailKit.Security;
 
 namespace fmail
 {
@@ -118,8 +119,8 @@ namespace fmail
             messageList.Visible = true;
             refresh_btn.Visible = true;
             webBrowser.Visible = true;
-            DeleteMessage.Visible = true;
-            Markasunread.Visible = true;
+            //DeleteMessage.Visible = true;
+            //Markasunread.Visible = true;
         }
 
         //Not working yet
@@ -422,8 +423,8 @@ namespace fmail
         {
             // Prompt the user for confirmation before logging out
             DialogResult logout = MessageBox.Show(
-                   "Logout",
                    "Are you sure you want to logout?",
+                   "Logout",
                    MessageBoxButtons.OKCancel,
                    MessageBoxIcon.Question,
                    MessageBoxDefaultButton.Button1,
@@ -440,6 +441,18 @@ namespace fmail
                 // Restart the application
                 Application.Restart();
             }           
+        }
+
+        /// <summary>
+        /// Disables the delete message and mark as unread buttons when the form is shown.
+        /// </summary>
+        /// <param name="e">The event data.</param>
+        protected override void OnShown(EventArgs e)
+        {
+            DeleteMessage.Visible = false;
+            Markasunread.Visible = false;
+            
+            base.OnShown(e);
         }
     }
 }
