@@ -72,6 +72,11 @@ namespace fmail
             UpdateAttachedStatus();
             status_label.Text = "";
 
+            SetGrey(to);
+            SetGrey(cc);
+            SetGrey(bcc);
+            SetGrey(subject);
+
             //attachedfiles.Text = "";
 
             //progress bar
@@ -592,7 +597,7 @@ namespace fmail
                 cc.Text = placeholders[1];
             }
 
-            SetBlack(cc);
+            SetGrey(cc);
         }
 
         /// <summary>
@@ -607,7 +612,7 @@ namespace fmail
                 bcc.Text = placeholders[2];
             }
                         
-            SetBlack(bcc);
+            SetGrey(bcc);
         }
 
         /// <summary>
