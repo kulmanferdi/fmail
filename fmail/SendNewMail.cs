@@ -12,6 +12,7 @@ using MailKit.Net.Imap;
 
 using HtmlAgilityPack;
 using HtmlDocument = HtmlAgilityPack.HtmlDocument;
+using System.Xml.Linq;
 
 namespace fmail
 {
@@ -69,8 +70,9 @@ namespace fmail
 
             // Init label content
             UpdateAttachedStatus();
-            //attachedfiles.Text = "";
             status_label.Text = "";
+
+            //attachedfiles.Text = "";
 
             //progress bar
             //backgroundWorker.RunWorkerAsync();
@@ -501,6 +503,8 @@ namespace fmail
             {
                 to.Text = "";
             }
+
+            SetBlack(to);
         }
 
         /// <summary>
@@ -514,6 +518,8 @@ namespace fmail
             {
                 cc.Text = "";
             }
+
+            SetBlack(cc);
         }
 
         /// <summary>
@@ -527,6 +533,8 @@ namespace fmail
             {
                 bcc.Text = "";
             }
+
+            SetBlack(bcc);
         }
 
         /// <summary>
@@ -540,6 +548,8 @@ namespace fmail
             {
                 subject.Text = "";
             }
+
+            SetBlack(subject);
         }
 
         /// <summary>
@@ -566,6 +576,8 @@ namespace fmail
             {
                 to.Text = placeholders[0];
             }
+
+            SetGrey(to);
         }
 
         /// <summary>
@@ -579,6 +591,8 @@ namespace fmail
             {
                 cc.Text = placeholders[1];
             }
+
+            SetBlack(cc);
         }
 
         /// <summary>
@@ -592,6 +606,8 @@ namespace fmail
             {
                 bcc.Text = placeholders[2];
             }
+                        
+            SetBlack(bcc);
         }
 
         /// <summary>
@@ -605,6 +621,8 @@ namespace fmail
             {
                 subject.Text = placeholders[3];
             }
+
+            SetGrey(subject);
         }
 
         /// <summary>
@@ -691,6 +709,31 @@ namespace fmail
 
             base.OnVisibleChanged(e);
         }
+
+        /// <summary>
+        /// Sets the text color of the specified TextBox to gray if its text matches any of the predefined placeholders.
+        /// </summary>
+        /// <param name="t">The TextBox whose text color needs to be set.</param>
+        private void SetGrey(TextBox t)
+        {
+            foreach (var placeholder in placeholders)
+            {
+                if (placeholder == t.Text)
+                {
+                    t.ForeColor = System.Drawing.Color.Gray;
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sets the text color of the specified TextBox to black.
+        /// </summary>
+        /// <param name="t">The TextBox whose text color needs to be set.</param>
+        private void SetBlack(TextBox t)
+        {            
+            t.ForeColor = System.Drawing.Color.Black;
+            return;               
+        }
     }
 }
-
