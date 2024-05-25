@@ -3,6 +3,10 @@ using MailKit;
 
 namespace fmail
 {
+    /// <summary>
+    /// Provides event arguments for when a client fails to authenticate.
+    /// </summary>
+    /// <typeparam name="T">The type of mail service client connection.</typeparam>
     class AuthenticationFailedEventArgs<T> : EventArgs where T : IMailService
     {
         /// <summary>

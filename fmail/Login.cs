@@ -13,6 +13,10 @@ namespace fmail
 
         private static string user;
 
+        // <summary>
+        /// Initializes a new instance of the Login form.
+        /// Sets up event handlers, combo box styles, and displays the current program version.
+        /// </summary>
         public Login()
         {
             InitializeComponent();
@@ -96,6 +100,11 @@ namespace fmail
             }
         }
 
+        /// <summary>
+        /// Initializes the UI components based on the current server settings.
+        /// This method is typically called during the form's OnShown event.
+        /// </summary>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         protected override void OnShown(EventArgs e)
         {
             foreach (var server in Program.ServerData)
@@ -114,7 +123,13 @@ namespace fmail
 
             base.OnShown(e);
         }
-       
+
+        /// <summary>
+        /// Handles the event when the port selection changes in the combo box.
+        /// Sets the SSL checkbox based on the selected port.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the port combo box.</param>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         void PortChanged(object sender, EventArgs e)
         {
             var port = port_combo.Text.Trim();
@@ -129,6 +144,10 @@ namespace fmail
                     break;
             }
         }
+
+        /// <summary>
+        /// Checks if the user has entered a server, username, and password before enabling the Sign In button.
+        /// </summary>
         void CheckLogIn()
         {
             signin_btn.Enabled = !string.IsNullOrEmpty(server_combo.Text) &&
@@ -136,6 +155,12 @@ namespace fmail
                 !string.IsNullOrEmpty(password_txt.Text);
         }
 
+        /// <summary>
+        /// Handles the event when the server selection changes in the combo box.
+        /// Sets the SSL checkbox and port based on the selected server.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the server combo box.</param>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         void ServerChanged(object sender, EventArgs e)
         {
             switch (server_combo.Text)
@@ -156,6 +181,12 @@ namespace fmail
             CheckLogIn();
         }
 
+        /// <summary>
+        /// Handles the event when the SSL checkbox state changes.
+        /// Sets the port in the combo box based on the SSL checkbox state if no port is specified.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the SSL checkbox.</param>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         void EnableSSLChanged(object sender, EventArgs e)
         {
             var checkbox = (CheckBox)sender;
@@ -167,6 +198,12 @@ namespace fmail
             }
         }
 
+        /// <summary>
+        /// Handles the Sign In button click event.
+        /// Authenticates the user and configures server connections based on user input.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the Sign In button.</param>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         void SignInClicked(object sender, EventArgs e) 
         {
             try
@@ -238,6 +275,11 @@ namespace fmail
             Visible = false;
         }
 
+        /// <summary>
+        /// Raises the Closed event.
+        /// This override ensures that the application exits when the form is closed.
+        /// </summary>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -245,6 +287,11 @@ namespace fmail
             Application.Exit(); 
         }
 
+        // Handles the Click event of the cancel_btn control.
+        /// Clears the text in the username and password text boxes.
+        /// </summary>
+        /// <param name="sender">The source of the event, typically the cancel button.</param>
+        /// <param name="e">An EventArgs object that contains the event data.</param>
         private void cancel_btn_Click(object sender, EventArgs e)
         {
             username_txt.Clear();

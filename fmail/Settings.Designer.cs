@@ -34,7 +34,7 @@
             this.smtp_combo = new System.Windows.Forms.ComboBox();
             this.save_btn = new System.Windows.Forms.Button();
             this.separate1 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.clr_label = new System.Windows.Forms.Label();
             this.clr_draft = new System.Windows.Forms.Button();
             this.clr_spam = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -103,14 +103,14 @@
             this.separate1.Text = " Ports --------------------------------------------------------------------------" +
     "-------------------";
             // 
-            // label1
+            // clr_label
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(35, 175);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(313, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Clear ---------------------------------------------------------------------------" +
+            this.clr_label.AutoSize = true;
+            this.clr_label.Location = new System.Drawing.Point(35, 175);
+            this.clr_label.Name = "clr_label";
+            this.clr_label.Size = new System.Drawing.Size(313, 13);
+            this.clr_label.TabIndex = 11;
+            this.clr_label.Text = "Clear ---------------------------------------------------------------------------" +
     "------------------";
             // 
             // clr_draft
@@ -139,7 +139,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.clr_spam);
             this.Controls.Add(this.clr_draft);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.clr_label);
             this.Controls.Add(this.separate1);
             this.Controls.Add(this.save_btn);
             this.Controls.Add(this.imap_combo);
@@ -160,7 +160,7 @@
         private System.Windows.Forms.ComboBox smtp_combo;
         private System.Windows.Forms.Button save_btn;
         private System.Windows.Forms.Label separate1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label clr_label;
         private System.Windows.Forms.Button clr_draft;
         private System.Windows.Forms.Button clr_spam;
     }

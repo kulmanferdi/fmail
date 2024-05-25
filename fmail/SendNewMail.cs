@@ -112,6 +112,8 @@ namespace fmail
             SetRecepients(to, currentMessage, emptyCount);
             SetRecepients(cc, currentMessage, emptyCount);
             SetRecepients(bcc, currentMessage, emptyCount);
+
+
             //status_label.Text = "Setting recepients...";
             //backgroundWorker.ReportProgress(30);
 
@@ -263,7 +265,7 @@ namespace fmail
         /// </summary>
         /// <param name="t">The TextBox containing email addresses.</param>
         /// <param name="m">The MimeMessage to which recipients will be added.</param>
-        private void SetRecepients(System.Windows.Forms.TextBox t, MimeMessage m, int empty)
+        private void SetRecepients(TextBox t, MimeMessage m, int empty)
         {    
             string me = CheckShortcut(t.Text, "me");
             string username = Login.GetUsername();

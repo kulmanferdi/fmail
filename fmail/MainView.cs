@@ -14,6 +14,9 @@ namespace fmail
 {
     public partial class MainView : Form
     {
+        /// <summary>
+        /// Initializes a new instance of the MainView class and sets up event handlers and initial view.
+        /// </summary>
         public MainView()
         {
             InitializeComponent();
@@ -38,7 +41,12 @@ namespace fmail
             about1.Visible = false;
                         
         }
-               
+
+        /// <summary>
+        /// Shows the About view, hiding all other views and controls.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ShowAbout(object sender, EventArgs e)
         {
             // set the label text to "About"
@@ -59,6 +67,11 @@ namespace fmail
             about1.BringToFront();
         }
 
+        /// <summary>
+        /// Shows the Settings view, hiding all other views and controls.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ShowSettings(object sender, EventArgs e)
         {
             // set the label text to "Settings"
@@ -79,11 +92,11 @@ namespace fmail
             settings1.BringToFront();
         }
 
-        private void RefreshInbox(object sender, EventArgs e)
-        {
-            Refresh();
-        }
-
+        /// <summary>
+        /// Shows the Send Mail view, hiding all other views and controls.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ShowSendMail(object sender, EventArgs e)
         {
             // set the label text to "Send Mail"
@@ -104,6 +117,11 @@ namespace fmail
             sendNewMail1.BringToFront();
         }
 
+        /// <summary>
+        /// Shows the Inbox view, hiding all other views and controls.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
         private void ShowInbox(object sender, EventArgs e)
         {
             // set the label text to "Your inbox"
@@ -175,6 +193,10 @@ namespace fmail
                 this.webBrowser = webBrowser;
             }
 
+            /// <summary>
+            /// Renders a multipart/related MIME part, handling text/html and text/rtf content types.
+            /// </summary>
+            /// <param name="related">The multipart/related MIME part to render.</param>
             void RenderMultipartRelated(MultipartRelated related)
             {
                 var root = related.Root;
@@ -198,6 +220,13 @@ namespace fmail
                             break;
                         }
 
+                        // check for text/rtf
+                        if (body.ContentType.IsMimeType("text", "rtf"))
+                        {
+                            text = body;
+                            break;
+                        }
+
                         text/*??*/= body;
                     }
                 }
@@ -216,6 +245,10 @@ namespace fmail
 
                         documentText = html;
                     }
+                    else if (text.ContentType.IsMimeType("text", "rtf"))
+                    {
+                        RenderRtf(text);
+                    }
                     else
                     {
                         RenderText(text);
@@ -229,14 +262,46 @@ namespace fmail
                 }
             }
 
-            void DownloadMultipartRelated(IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart, CancellationToken cancellationToken)
+            /// <summary>
+            /// Renders an RTF text part, converting it to HTML.
+            /// </summary>
+            /// <param name="text">The RTF text part to render.</param>
+            void RenderRtf(TextPart text)
+            {  
+                //documentText = ConvertRtfToHtml(text.Text);
+                documentText = "<html><body>RTF content: " + System.Net.WebUtility.HtmlEncode(text.Text) + "</body></html>";
+            }
+
+            /// <summary>
+            /// Converts RTF text to HTML using a third-party library or custom implementation.
+            /// </summary>
+            /// <param name="rtf">The RTF text to convert.</param>
+            /// <returns>The converted HTML text.</returns>
+            string ConvertRtfToHtml(string rtf)
             {
-                // download the entire multipart/related for simplicity since we'll probably end up needing all of the image attachments anyway...
+                // Use a third-party library or implement your own RTF to HTML conversion
+                // This is a placeholder for the actual conversion logic
+                return "<html><body>RTF content: " + System.Net.WebUtility.HtmlEncode(rtf) + "</body></html>";
+            }
+
+            /// <summary>
+            /// Downloads and renders a multipart/related MIME part from the specified mail folder.
+            /// </summary>
+            /// <param name="folder">The mail folder to download from.</param>
+            /// <param name="uid">The unique identifier of the email message.</param>
+            /// <param name="bodyPart">The multipart/related body part to download.</param>
+            /// <param name="cancellationToken">A cancellation token.</param>
+            void DownloadMultipartRelated(IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart, CancellationToken cancellationToken)
+            {               
                 var related = folder.GetBodyPart(uid, bodyPart, cancellationToken) as MultipartRelated;
 
                 RenderMultipartRelated(related);
             }
 
+            /// <summary>
+            /// Renders a text part, converting it to HTML if necessary.
+            /// </summary>
+            /// <param name="text">The text part to render.</param>
             void RenderText(TextPart text)
             {
                 string html;
@@ -267,6 +332,13 @@ namespace fmail
                 documentText = html;
             }
 
+            /// <summary>
+            /// Downloads a text part from the specified mail folder and renders it.
+            /// </summary>
+            /// <param name="folder">The mail folder to download from.</param>
+            /// <param name="uid">The unique identifier of the email message.</param>
+            /// <param name="bodyPart">The text body part to download.</param>
+            /// <param name="cancellationToken">A cancellation token.</param>
             void DownloadTextPart(IMailFolder folder, UniqueId uid, BodyPartText bodyPart, CancellationToken cancellationToken)
             {
                 var entity = folder.GetBodyPart(uid, bodyPart, cancellationToken);
@@ -274,6 +346,13 @@ namespace fmail
                 RenderText((TextPart)entity);
             }
 
+            /// <summary>
+            /// Downloads and renders a body part from the specified mail folder, handling different types of MIME parts appropriately.
+            /// </summary>
+            /// <param name="folder">The mail folder to download from.</param>
+            /// <param name="uid">The unique identifier of the email message.</param>
+            /// <param name="body">The body part to download.</param>
+            /// <param name="cancellationToken">A cancellation token.</param>
             void DownloadBodyPart(IMailFolder folder, UniqueId uid, BodyPart body, CancellationToken cancellationToken)
             {
                 var multipart = body as BodyPartMultipart;
@@ -340,6 +419,10 @@ namespace fmail
                 }
             }
 
+            /// <summary>
+            /// Runs the email body part download and rendering process.
+            /// </summary>
+            /// <param name="cancellationToken">A cancellation token.</param>
             public override void Run(CancellationToken cancellationToken)
             {
                 if (!folder.IsOpen)
@@ -351,6 +434,9 @@ namespace fmail
                 Program.RunOnMainThread(webBrowser, Render);
             }
 
+            /// <summary>
+            /// Renders the downloaded email content in the web browser control.
+            /// </summary>
             void Render()
             {
                 webBrowser.DocumentText = documentText;
@@ -385,19 +471,30 @@ namespace fmail
             return e.UniqueId;
 
             //yet to implement
-        }      
-      
+        }
 
+        /// <summary>
+        /// Handles the event when a folder is selected, opening the selected folder in the message list.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments containing the selected folder.</param>
         void OnFolderSelected(object sender, FolderSelectedEventArgs e)
         {
             messageList.OpenFolder(e.Folder);
         }
 
+        /// <summary>
+        /// Loads the folder tree view with available mail folders.
+        /// </summary>
         public void LoadContent()
         {
             folderTreeView.LoadFolders();
         }
 
+        /// <summary>
+        /// Handles the form closing event, ensuring that the application exits properly.
+        /// </summary>
+        /// <param name="e">The event arguments.</param>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -453,6 +550,17 @@ namespace fmail
             Markasunread.Visible = false;
             
             base.OnShown(e);
+        }
+
+
+        /// <summary>
+        /// Refreshes the inbox view.
+        /// </summary>
+        /// <param name="sender">The event sender.</param>
+        /// <param name="e">The event arguments.</param>
+        private void RefreshInbox(object sender, EventArgs e)
+        {
+            Refresh();
         }
     }
 }

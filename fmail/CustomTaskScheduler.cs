@@ -39,6 +39,10 @@ namespace fmail
         /// </summary>
         public override int MaximumConcurrencyLevel { get { return 1; } }
 
+        /// <summary>
+        /// Attempts to dequeue a task from the task queue and execute it.
+        /// </summary>
+        /// <param name="state">An object that contains data to be used by the method (unused in this implementation).</param>
         void TryDequeueAndExecuteTask(object state)
         {
             if (tasks.TryDequeue(out var toExecute))

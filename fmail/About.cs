@@ -22,6 +22,7 @@ namespace fmail
 
             // Attach the event handler for the Git button click event
             git_btn.Click += GitClicked;
+           
         }
 
         /// <summary>

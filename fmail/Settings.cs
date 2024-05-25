@@ -115,6 +115,12 @@ namespace fmail
             imap_combo.Text = imapPort.ToString();
             smtp_combo.Text = smtpPort.ToString();
 
+
+            clr_draft.Visible = false;
+            clr_spam.Visible = false;
+            clr_label.Visible = false;
+
+
             clr_draft.Enabled = false;
             clr_spam.Enabled = false;
 
