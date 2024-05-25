@@ -31,7 +31,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
-Your Name - [@kulmanferdi](https://twitter.com/kulmanferdi) - ferdi.kulman@gmail.com
+Ferdinand Kulman - [@kulmanferdi](https://twitter.com/kulmanferdi) - ferdi.kulman@gmail.com
 
 Project Link: [https://github.com/kulmanferdi/fmail](https://github.com/kulmanferdi/fmail)
 
