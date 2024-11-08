@@ -29,6 +29,10 @@
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kulmanferdi/fmail&type=Date)](https://star-history.com/#kulmanferdi/fmail&Date)
+
 ## Contact
 
 Ferdinand Kulman - [@kulmanferdi](https://twitter.com/kulmanferdi) - ferdi.kulman@gmail.com
